@@ -9,3 +9,6 @@
 # mark.py文件用于标记并返回停车位的坐标（图片及返回结果都保存到了cameras文件夹中）
 # run.py文件用于测试（其结果保存在result文件夹中）
 # train.py用于训练网络
+数据集网址：
+http://web.inf.ufpr.br/vri/parking-lot-database
+http://claudiotest.isti.cnr.it/park-datasets/
