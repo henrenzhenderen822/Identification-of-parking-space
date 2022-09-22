@@ -1,12 +1,14 @@
-from net2.net8 import Binarynet  # 可导入不同的网络结构进行训练
+'''此程序用来训练网络'''
+
 import torch
 from torch import nn, optim
 import os
 import visdom
 import time
-from datasets1 import train_loader, test_loader   # 直接加载构建好的数据集
-from datasets3 import test_loader as test_loader2
-from datasets3 import train_loader as train_loader2
+from datasets.datasets1 import train_loader, test_loader   # 直接加载构建好的数据集
+from datasets.datasets3 import test_loader as test_loader2
+from datasets.datasets3 import train_loader as train_loader2
+from parameters import Parameters
 
 
 # 设置随机数种子，确保每次的初始化相同
@@ -16,27 +18,33 @@ torch.cuda.manual_seed(seed)
 torch.cuda.manual_seed_all(seed)
 
 # 主要参数
-epochs = 10
-leaning_rate = 2e-5
+epochs = Parameters.epochs
+leaning_rate = Parameters.learning_rate
+img_size = Parameters.img_size
 
-'''★★★★★在此处修改模型的保存路径★★★★★'''
-path = 'checkpoints_c2p_2/30'
+'''★★★★★此处修改模型的保存路径★★★★★'''
+path = 'checkpoints/c2p/'
 
 device = torch.device('cuda')
-model = Binarynet().to(device)
+model = Parameters.model.to(device)
 criteon = nn.CrossEntropyLoss().to(device)
 optimizer = optim.Adam(model.parameters(), lr=leaning_rate)     # 优化器
 # scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=4, gamma=0.5)   # 学习率每4个epoch衰减成原来的1/2。
 
-# 记录开始训练时间
-since = time.time()
+start_time = time.time()
 
 
 # 训练、验证
 def main():
+
+    print(img_size)
+
+    # 记录开始训练时间
+    since = time.time()
+
     viz = visdom.Visdom()
-    viz.line([0], [0], win='loss', opts=dict(title='loss'))
-    viz.line([[0.9], [0.9]], [0], win='val_acc', opts=dict(title='val_acc', legend=['CNRPark', 'PKLot']))
+    viz.line([0], [0], win='loss'+str(img_size), opts=dict(title='loss'+str(img_size)))
+    viz.line([[0.9], [0.9]], [0], win='val_acc'+str(img_size), opts=dict(title='val_acc_'+str(img_size), legend=['CNRPark', 'PKLot']))
     now = time.strftime('%m-%d_%H%M' + '.pth')  # 结构化输出当前的时间
     best_acc = 0
     global_step = 0
@@ -53,8 +61,9 @@ def main():
             loss.backward()
             optimizer.step()
 
+            # 绘制loss曲线（每10个epoch）
             if global_step % 10 == 0:
-                viz.line([loss.item()], [global_step], win='loss', opts=dict(title='loss'), update='append')
+                viz.line([loss.item()], [global_step], win='loss'+str(img_size), opts=dict(title='loss'+str(img_size)), update='append')
             global_step += 1
 
         # print('当前学习率为：{}'.format(scheduler.get_last_lr()))
@@ -65,6 +74,7 @@ def main():
         # 验证
         model.eval()
         with torch.no_grad():  # 表示测试过程不需要计算梯度信息
+
             '''在CNRPark测试集上验证'''
             total_correct = 0
             total_num = 0
@@ -102,17 +112,27 @@ def main():
                 # torch.save(state, os.path.join(path, now))    # 以时间命名模型保存下来
                 last_epoch = epoch
 
-            viz.line([[epoch_acc], [epoch_acc2]], [epoch], win='val_acc', update='append')
+            viz.line([[epoch_acc], [epoch_acc2]], [epoch], win='val_acc'+str(img_size), update='append')
             # 这里是数据集最后一轮，如果不足10张则展示的数量是实际最后一轮图片数量
-            viz.images(x[:10], nrow=5, win='valid', opts=dict(title='vaild'))
-            viz.text(str(pred[:10].detach().cpu().numpy()), win='pred_label', opts=dict(title='pred_label'))
+            # viz.images(x[:10], nrow=5, win='valid', opts=dict(title='vaild'))
+            # viz.text(str(pred[:10].detach().cpu().numpy()), win='pred_label', opts=dict(title='pred_label'))
 
-            # if epoch >= 10 and epoch - last_epoch > 3:
-            #     break           # 如果已经经历了10个epoch 且 准确度在最后面4个epoch内没有提升则结束循环
+            if epoch >= 10 and epoch - last_epoch > 3:
+                break           # 如果已经经历了10个epoch 且 准确度在最后面4个epoch内没有提升则结束循环
 
     time_elapsed = time.time() - since
     print('训练总用时: {:.0f}m {:.0f}s'.format(time_elapsed // 60, time_elapsed % 60))
 
 
 if __name__ == '__main__':
-    main()
+    for i in [5, 10, 20, 30, 40, 50]:
+        print()
+        epochs = epochs
+        leaning_rate = leaning_rate
+        img_size = i
+        '''★★★★★模型的保存路径★★★★★'''
+        path = path + str(img_size)
+        main()
+
+    total_time = time.time() - start_time
+    print('总用时: {:.0f}m {:.0f}s'.format(total_time // 60, total_time % 60))
