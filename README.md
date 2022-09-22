@@ -1,5 +1,5 @@
 # -实验探究多种低分辨停车场车位图像的识别
-# -pytorch版本1.10.2   cuda版本10.2    opencv版本4.5.5
+# -python版本3.9  pytorch版本1.10.2   cuda版本10.2   opencv版本4.5.5
 # cameras文件夹建立了停车场图像与对应的停车位坐标
 # checkpoints文件夹用于保存训练好的模型
 # datasets文件夹用于保存数据集以及对应的标签（txt格式）
