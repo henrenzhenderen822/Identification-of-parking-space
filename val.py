@@ -1,6 +1,6 @@
 from net.net50 import Binarynet
 import torch
-from datasets3 import test_loader   # 利用PKLot数据集中的100000张图片对训练好的模型进行验证
+from datasets.datasets3 import test_loader   # 利用PKLot数据集中的100000张图片对训练好的模型进行验证
 
 
 device = torch.device('cuda')

@@ -5,6 +5,12 @@ import pandas as pd
 import cv2
 import numpy as np
 
+
+# 读取需要操作的图片
+image = cv2.imread('cameras/baidu1/baidu1.jpg')
+# 填写需要保存的文件名称
+filename = 'cameras/baidu2/baidu2.csv'
+
 current_pos = None
 tl = None
 br = None
@@ -61,13 +67,11 @@ def get_rect(im, title='get_rect'):  # (a,b) = get_rect(im, title='get_rect')
     return points
 
 
-# 读取需要操作的图片
-image = cv2.imread('cameras/baidu1/baidu1.jpg')
 points = []
 points = get_rect(image, title='get_rect')
 
 title = ('x1', 'y1', 'x2', 'y2')
 test = pd.DataFrame(columns=title, data=points)
 
-# 填写需要保存的文件名称
-# test.to_csv('cameras/baidu2/baidu2.csv')
+# 将patch坐标保存为csv文件
+# test.to_csv(filename)

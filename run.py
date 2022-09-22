@@ -1,16 +1,16 @@
 '''此程序用来测试，得到结果图像'''
 
-from net.net5ppp import Binarynet    # 可选取不同的网络结构，对应不同的输入图片大小
 import torch
 import os
 import cv2
 import numpy as np
 import time
+from parameters import Parameters
 
 
 # 加载模型
-modelname = 'mix_checkpoints/5ppp/09-05_2116.pth'  # 已保存的模型文件
-model = Binarynet().to('cuda')
+modelname = 'checkpoints/c2p/5/09-09_1835.pth'  # 已保存的模型文件
+model = Parameters.model.to('cuda')
 model.load_state_dict(torch.load(modelname)['state_dict'])   # 加载保存好的模型
 
 # 加载图像
@@ -21,10 +21,11 @@ image = cv2.imread(img_path)
 filename = 'cameras/baidu2/baidu2.csv'
 
 '''★★★★★在此修改结果图片的保存路径★★★★★'''
-path = 'result/mix_5ppp'
+path = 'result/hhhhhhhh'
 
 '''★★★★★在此修改单个停车位的图片大小★★★★★'''
-patch_size = 5
+patch_size = Parameters.size
+# print(patch_size)
 
 
 # 将opencv图片格式转化为torch格式

@@ -1,13 +1,13 @@
 '''此程序用来训练网络'''
 
-from net.net5ppp import Binarynet  # 可导入不同的网络结构进行训练
 import torch
 from torch import nn, optim
 import os
 import visdom
 import time
-from datasets1 import train_loader, test_loader   # 直接加载构建好的数据集
-from datasets3 import test_loader as test_loader2
+from datasets.datasets1 import train_loader, test_loader   # 直接加载构建好的数据集
+from datasets.datasets3 import test_loader as test_loader2
+from parameters import Parameters
 
 
 # 设置随机数种子，确保每次的初始化相同
@@ -17,14 +17,14 @@ torch.cuda.manual_seed(seed)
 torch.cuda.manual_seed_all(seed)
 
 # 主要参数
-epochs = 18
-leaning_rate = 5e-4
+epochs = Parameters.epochs
+leaning_rate = Parameters.learning_rate
 
 '''★★★★★在此处修改模型的保存路径★★★★★'''
 path = 'mix_checkpoints/5ppp'
 
 device = torch.device('cuda')
-model = Binarynet().to(device)
+model = Parameters.model.to(device)
 criteon = nn.CrossEntropyLoss().to(device)
 optimizer = optim.Adam(model.parameters(), lr=leaning_rate)     # 优化器
 scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=4, gamma=0.5)   # 学习率每4个epoch衰减成原来的1/2。

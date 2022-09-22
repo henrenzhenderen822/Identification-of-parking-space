@@ -3,7 +3,7 @@
 import torch
 import cv2
 import numpy as np
-from datasets3 import train_loader, test_loader   # 此处更改需要查看的数据集
+from datasets.datasets3 import train_loader, test_loader   # 此处更改需要查看的数据集
 import matplotlib.pyplot as plt
 
 

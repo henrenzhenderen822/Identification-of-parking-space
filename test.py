@@ -6,10 +6,26 @@ import numpy as np
 import cv2
 import visdom
 import time
+from matplotlib import pyplot as plt
 
 
-m = torch.load('checkpoints_c2p_2/40/09-11_1501.pth')['model_struct']
-print(m)
-acc = torch.load('checkpoints_c2p_2/40/09-11_1501.pth')['best_acc']
-print(acc)
+x = range(10)
+y = np.sin(x)
+z = np.cos(x)
+plt.plot(x, y, )
+plt.savefig('result_line/save.jpg')
+plt.show()
+plt.plot(x, z)
+
+plt.savefig('1save.jpg')
+plt.show()
+
+
+
+
+
+
+
+
+
 
