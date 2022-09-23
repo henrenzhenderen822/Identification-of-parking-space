@@ -1,7 +1,7 @@
 # 此程序用于打印不同分辨率图片在模型上的运行结果（25张）
 from net.net3 import Binarynet
 import torch
-from datasets.datasets3 import test_loader
+from datasets.datasets2 import test_loader
 import matplotlib.pyplot as plt
 import cv2
 import numpy as np
@@ -46,7 +46,7 @@ def main():
         if pred[i] == 0:
             z = 'vacant'
         else:
-            z = 'busy'
+            z = '1'
 
         if pred[i] != label[i]:
             color = 'red'

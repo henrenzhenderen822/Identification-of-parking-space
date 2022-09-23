@@ -3,7 +3,7 @@
 import torch
 import cv2
 import numpy as np
-from datasets.datasets3 import train_loader, test_loader   # 此处更改需要查看的数据集
+from datasets.datasets2 import train_loader, test_loader   # 此处更改需要查看的数据集
 import matplotlib.pyplot as plt
 
 
@@ -67,7 +67,7 @@ def main():
         if label[i] == 0:
             z = 'vacant'
         else:
-            z = 'busy'
+            z = '1'
         img = make_suit_plt(image[i])
         plt.subplot(5, 5, i+1)
         plt.title(z)
