@@ -40,7 +40,7 @@ class Patchs(Dataset):
         images, labels = [], []
         with open(filename, 'r', encoding='utf-8') as file:
             l = file.readlines()  # readlines 是一个列表，它会按行读取文件的所有内容
-            random.shuffle(l)     # 将txt中的信息按行打乱，但仍然对应正确的label
+            # random.shuffle(l)     # 将txt中的信息按行打乱，但仍然对应正确的label
 
         for i in range(len(l)):
             image, label = l[i].split(' ')

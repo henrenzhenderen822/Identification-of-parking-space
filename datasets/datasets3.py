@@ -1,4 +1,4 @@
-'''此程序建立了 PKLot数据集 中的所有patch以及对应label的数据集 （PKLot数据集）'''
+'''此程序使用PKLot和CNRPark混合数据集，每类各5万张'''
 
 import torch
 import os
@@ -24,15 +24,15 @@ class Patchs(Dataset):
         self.tf = tf
 
         # image_path, label   (路径+标签)
-        self.images, self.labels = self.load_txt('data/PKLot_labels/all.txt')
+        self.images, self.labels = self.load_txt('../data/mix_labels/mix.txt')
 
         # 从上面的全部图片信息中截取不同的比例用作不同用途
         if mode == 'train':
-            self.images = self.images[:30000]
-            self.labels = self.labels[:30000]
+            self.images = self.images[:int(0.8 * len(self.images))]
+            self.labels = self.labels[:int(0.8 * len(self.labels))]
         elif mode == 'test':
-            self.images = self.images[70000:100000]
-            self.labels = self.labels[70000:100000]
+            self.images = self.images[int(0.8 * len(self.images)):]
+            self.labels = self.labels[int(0.8 * len(self.labels)):]
 
     def load_txt(self, filename):
 
@@ -40,12 +40,6 @@ class Patchs(Dataset):
         images, labels = [], []
         with open(filename, 'r', encoding='utf-8') as file:
             l = file.readlines()  # readlines 是一个列表，它会按行读取文件的所有内容
-            b = []  # 部分图片信息有误，b用来存储这些错误信息，然后在列表中删除这些错误信息
-            for i in range(len(l)):
-                if '(' in l[i]:
-                    b.append(l[i])
-            for i in range(len(b)):
-                l.remove(b[i])
             random.shuffle(l)   # 将txt中的信息按行打乱，但仍然对应正确的label
 
         for i in range(len(l)):
@@ -73,11 +67,10 @@ class Patchs(Dataset):
         return img, label
 
 
-# 对训练集数据进行0.5概率的水平翻转（左右镜像）
 data_transforms ={
     'train': transforms.Compose([
         lambda x:Image.open(x).convert('RGB'),  # string path => image data (变为图像的数据类型)
-        transforms.RandomHorizontalFlip(0.5),  # 水平角度翻转
+        transforms.RandomHorizontalFlip(),  # 水平角度翻转
         # transforms.RandomRotation(10),  # 随机旋转 +-10度
         # transforms.Resize([60]),  # 重新设置大小
         # transforms.RandomCrop([50, 50]),  # 裁剪成50×50
@@ -85,19 +78,17 @@ data_transforms ={
         transforms.ToTensor()]),
     'test': transforms.Compose([
         lambda x:Image.open(x).convert('RGB'),  # string path => image data (变为图像的数据类型)
-        transforms.Resize([size, size]),
-        transforms.ToTensor()])
+        transforms.Resize([size, size]), transforms.ToTensor()])
     }
 
-train_datasets = Patchs('data/PKLot_patches', data_transforms['train'], mode='train')
-test_datasets = Patchs('data/PKLot_patches', data_transforms['test'], mode='test')
+train_datasets = Patchs('../data', data_transforms['train'], mode='train')
+test_datasets = Patchs('../data', data_transforms['test'], mode='test')
 
 train_loader = DataLoader(train_datasets, batch_size=batchsz, shuffle=True)
 test_loader = DataLoader(test_datasets, batch_size=batchsz, shuffle=True)
 
 
 def main():
-    # 调用时会产生相对路径问题，若要在此处运行，则要修改文件路径为'../data'
     a = len(train_loader.dataset)
     b = len(test_loader.dataset)
     c = a + b

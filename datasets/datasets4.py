@@ -1,11 +1,7 @@
-'''此程序使用PKLot和CNRPark混合数据集，每类各5万张'''
+'''此程序使用的是CNRpark这个小数据集'''
 
-import torch
-import os
-from torch.utils.data import Dataset, DataLoader  # Dataset:自定义数据集的母类
-from torchvision import transforms  # 图片的变换器
-from PIL import Image  # PIL(Python Image Library)是python的第三方图像处理库
-import pandas as pd
+from torch.utils.data import DataLoader
+from torchvision import transforms, datasets
 import random
 from parameters import Parameters
 
@@ -15,77 +11,54 @@ size = Parameters.img_size
 batchsz = Parameters.batch_size
 
 
-class Patchs(Dataset):
-
-    def __init__(self, root, tf, mode):   # mode:模式（训练 or 测试）   tf:transform对图像采取变换
-        super(Patchs, self).__init__()
-
-        self.root = root
-        self.tf = tf
-
-        # image_path, label   (路径+标签)
-        self.images, self.labels = self.load_txt('../data/mix_labels/mix.txt')
-
-        # 从上面的全部图片信息中截取不同的比例用作不同用途
+# 利用torchvision.datasets中自带的ImageFolder直接构造出数据集
+# 划分训练集、测试集 (8：2)
+class CustomImageFolder(datasets.ImageFolder):
+    def __init__(self, root, transform, mode):
+        super(CustomImageFolder, self).__init__(root, transform)
+        assert mode in ['train', 'test']
+        random.seed(0)
+        random.shuffle(self.samples)
         if mode == 'train':
-            self.images = self.images[:int(0.8 * len(self.images))]
-            self.labels = self.labels[:int(0.8 * len(self.labels))]
+            self.samples = self.samples[:int(0.8*len(self))]
+            self.targets = [s[1] for s in self.samples]
+            self.imgs = self.samples
         elif mode == 'test':
-            self.images = self.images[int(0.8 * len(self.images)):]
-            self.labels = self.labels[int(0.8 * len(self.labels)):]
+            self.samples = self.samples[int(0.8*len(self)):]
+            self.targets = [s[1] for s in self.samples]
+            self.imgs = self.samples
 
-    def load_txt(self, filename):
+    def __getitem__(self, index):
+        path, target = self.samples[index]
+        sample = self.loader(path)
+        if self.transform is not None:
+            sample = self.transform(sample)
+        if self.target_transform is not None:
+            target = self.target_transform(target)
+        return sample, target
 
-        '''读取（加载）txt文件'''
-        images, labels = [], []
-        with open(filename, 'r', encoding='utf-8') as file:
-            l = file.readlines()  # readlines 是一个列表，它会按行读取文件的所有内容
-            random.shuffle(l)   # 将txt中的信息按行打乱，但仍然对应正确的label
-
-        for i in range(len(l)):
-            image, label = l[i].split(' ')
-            images.append(self.root + '/' + image)
-            labels.append(int(label))
-
-        assert len(images) == len(labels)  # 确保图片和标签的列表长度一致，不一致会报错
-        return images, labels
-
-    def __len__(self):
-        return len(self.images)    # 裁剪过后的长度
-
-    def __getitem__(self, idx):
-        # idx： [0 - len(images)]
-        # self.images, self.labels
-        # 图片信息目前不是想要的数据类型（需要转化为图片信息）
-        # label: 0,1 标签信息已经是数据类型了
-        img, label = self.images[idx], self.labels[idx]
-        # print(img, label)
-
-        img = self.tf(img)    # 变为数据
-        label = torch.tensor(label)   # 把label也变为tensor类型
-
-        return img, label
+    def __len__(self) -> int:
+        return len(self.samples)
 
 
+# 数据处理和数据增强
 data_transforms ={
     'train': transforms.Compose([
-        lambda x:Image.open(x).convert('RGB'),  # string path => image data (变为图像的数据类型)
-        transforms.RandomHorizontalFlip(),  # 水平角度翻转
-        # transforms.RandomRotation(10),  # 随机旋转 +-10度
+        transforms.RandomHorizontalFlip(0.5),  # 水平角度翻转
+        # transforms.RandomRotation(10),  # 随机旋转 +-15度
         # transforms.Resize([60]),  # 重新设置大小
-        # transforms.RandomCrop([50, 50]),  # 裁剪成50×50
+        # transforms.RandomCrop([50, 50]),  # 随机裁剪
         transforms.Resize([size, size]),
         transforms.ToTensor()]),
-    'test': transforms.Compose([
-        lambda x:Image.open(x).convert('RGB'),  # string path => image data (变为图像的数据类型)
-        transforms.Resize([size, size]), transforms.ToTensor()])
+    'test': transforms.Compose([transforms.Resize([1, 1]), transforms.ToTensor()])
     }
 
-train_datasets = Patchs('../data', data_transforms['train'], mode='train')
-test_datasets = Patchs('../data', data_transforms['test'], mode='test')
 
-train_loader = DataLoader(train_datasets, batch_size=batchsz, shuffle=True)
-test_loader = DataLoader(test_datasets, batch_size=batchsz, shuffle=True)
+train_dataset = CustomImageFolder('../data/CNRPark', data_transforms['train'], 'train')
+test_dataset = CustomImageFolder('../data/CNRPark', data_transforms['test'], 'test')
+
+train_loader = DataLoader(train_dataset, batch_size=batchsz, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=batchsz, shuffle=True)
 
 
 def main():
@@ -102,13 +75,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
-
-
-
-
-
-
-
-
