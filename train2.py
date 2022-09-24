@@ -1,4 +1,4 @@
-'''此程序功能与train2.py相同，用plot可视化'''
+'''此程序功能与train.py相同，用plot可视化'''
 
 import torch
 from torch import nn, optim
