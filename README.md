@@ -11,7 +11,7 @@
 # parameters.py 用于配置参数
 # train.py用于训练网络
 # auto_script.py 用于自动修改参数运行训练
-# result_line文件用于保存训练过程（loss、accuracy）
+# result_line文件夹用于保存训练过程（loss、accuracy）
 '''data文件夹中只含有图片的路径标签，需要解压，数据集需要自行下载'''
 数据集网址：
 http://web.inf.ufpr.br/vri/parking-lot-database
