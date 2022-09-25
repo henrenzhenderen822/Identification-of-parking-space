@@ -14,5 +14,5 @@
 # result_line文件夹用于保存训练过程（loss、accuracy）
 '''data文件夹中只含有图片的路径标签，需要解压，数据集需要自行下载'''
 数据集网址：
-http://web.inf.ufpr.br/vri/parking-lot-database
-http://claudiotest.isti.cnr.it/park-datasets/
+PKLot：http://web.inf.ufpr.br/vri/parking-lot-database
+CNRPark：http://claudiotest.isti.cnr.it/park-datasets/
