@@ -1,5 +1,5 @@
 # 此程序用于打印不同分辨率图片在模型上的运行结果（25张）
-from net.net3 import Binarynet
+from net_3conv.net3 import Binarynet
 import torch
 from datasets.datasets2 import test_loader
 import matplotlib.pyplot as plt

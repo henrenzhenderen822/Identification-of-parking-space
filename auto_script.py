@@ -1,6 +1,5 @@
 '''此程序为自动化运行脚本，方便自动修改参数以训练网络'''
-# !/usr/bin/python
-# encoding=utf-8
+
 import datetime
 import os
 import threading
@@ -24,11 +23,11 @@ if __name__ == '__main__':
     if_parallel = False   # 显存较小，串行比较合适
 
     # 需要执行的命令列表
-    img_list = ['5', '10', '20', '30', '40', '50']
-    cmds = ['python train2.py --batch_size=128 --epochs=15 --learning_rate=5e-5 --img_size=' + i for i in img_list]
+    img_list = ['2', '3', '4', '5', '7', '9', '12', '16', '20', '25', '32']
+    cmds = ['python train2.py --batch_size=32 --epochs=1000 --learning_rate=2e-5 --input_size=50 --img_size=' + i for i in img_list]
 
     with open('result_line/acc.txt', 'a', encoding='utf-8') as f:
-        f.write('\n\n★★★自动化脚本运行★★★\n')
+        f.write('\n\n★★★自动化脚本运行★★★\n本次实验使用统一的50×50输入网络结构\n')
     if if_parallel:
         # 并行
         threads = []
@@ -57,3 +56,4 @@ if __name__ == '__main__':
     end_time = time.time()
     total_time = end_time - start_time
     print('总用时: {:.0f}m {:.0f}s'.format(total_time // 60, total_time % 60))
+    os.startfile('D:/bing_dundun.exe')   # 提醒我程序运行结束了（此行可删）
