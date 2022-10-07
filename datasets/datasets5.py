@@ -9,10 +9,12 @@ from parameters import Parameters
 '''图像大小以及批大小'''
 size = Parameters.img_size
 batchsz = 10
+input_size = Parameters.input_size
 
 
 # 数据处理
 data_transforms = transforms.Compose([transforms.Resize([size, size]),
+                                      transforms.Resize([input_size, input_size]),
                                       transforms.ToTensor()])
 
 my_dataset = datasets.ImageFolder('data/mydata', data_transforms)

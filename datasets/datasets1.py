@@ -13,6 +13,7 @@ from parameters import Parameters
 '''图像大小以及批大小'''
 size = Parameters.img_size
 batchsz = Parameters.batch_size
+input_size = Parameters.input_size
 
 
 class Patchs(Dataset):
@@ -28,11 +29,11 @@ class Patchs(Dataset):
 
         # 从上面的全部图片信息中截取不同的比例用作不同用途
         if mode == 'train':
-            self.images = self.images[:30000]
-            self.labels = self.labels[:30000]
+            self.images = self.images[:96]
+            self.labels = self.labels[:96]
         elif mode == 'test':
-            self.images = self.images[70000:100000]
-            self.labels = self.labels[70000:100000]
+            self.images = self.images[90000:100000]
+            self.labels = self.labels[90000:100000]
 
     def load_txt(self, filename):
 
@@ -76,10 +77,13 @@ data_transforms ={
         # transforms.Resize([60]),  # 重新设置大小
         # transforms.RandomCrop([50, 50]),  # 裁剪成50×50
         transforms.Resize([size, size]),
+        transforms.Resize([input_size, input_size]),
         transforms.ToTensor()]),
     'test': transforms.Compose([
         lambda x:Image.open(x).convert('RGB'),  # string path => image data (变为图像的数据类型)
-        transforms.Resize([size, size]), transforms.ToTensor()])
+        transforms.Resize([size, size]),
+        transforms.Resize([input_size, input_size]),
+        transforms.ToTensor()])
     }
 
 train_datasets = Patchs('data/PATCHES', data_transforms['train'], mode='train')
