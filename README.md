@@ -1,18 +1,19 @@
-# -实验探究多种低分辨停车场车位图像的识别  
-python版本3.9  pytorch版本1.10.2   cuda版本10.2   opencv版本4.5.5
-# cameras文件夹建立了停车场图像与对应的停车位坐标
-# checkpoints文件夹用于保存训练好的模型
-# datasets文件夹用于保存数据集以及对应的标签（txt格式）
-# net以及net2文件夹保存了各种分辨率输入下的网络结构
-# result文件夹用于保存测试图片的结果
-# datasets文件夹中的datasets.py文件用于构建数据集
-# mark.py文件用于标记并返回停车位的坐标（图片及返回结果都保存到了cameras文件夹中）
-# run.py文件用于测试（其结果保存在result文件夹中）
-# parameters.py 用于配置参数
-# train.py用于训练网络
-# auto_script.py 用于自动修改参数运行训练
-# result_line文件夹用于保存训练过程（loss、accuracy）
-数据集：
-MiniPK：见MiniPK文件夹
-PKLot：http://web.inf.ufpr.br/vri/parking-lot-database
+# -Environment:
+python3.9  pytorch1.10.2   cuda10.2   opencv4.5.5  
+# -Folder:
+cameras: The image of parking lot and the corresponding coordinates of parking space are established.    
+checkpoints: The folder is used to store the trained model.  
+datasets: The folder are used to store data sets and corresponding labels (txt format).  
+net: The folder the network structure for various resolution inputs.    
+result: The folder is used to save the results of the test images.  
+datasets: The file in the folder is used to build the dataset.  
+# -File:
+mark.py: File to mark and return the coordinates of the parking space (images and return results are saved in the cameras folder).    
+run.py: Files are used for testing (the results are saved in the result folder).  
+parameters.py: Used to configure parameters.  
+train.py: For training networks.  
+auto_script.py: Used to automatically modify parameter running training.  
+# -Data：  
+MiniPK：见MiniPK文件夹  
+PKLot：http://web.inf.ufpr.br/vri/parking-lot-database  
 CNRPark：http://claudiotest.isti.cnr.it/park-datasets/
